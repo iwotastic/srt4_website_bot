@@ -1,0 +1,8 @@
+# VENV directory
+venv/
+
+# VSCode
+.vscode
+
+# Python general
+__pycache__
