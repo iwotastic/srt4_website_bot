@@ -1,10 +1,13 @@
 from selenium.webdriver.common.by import By
 from console import console
 from utils import rand_email, rand_text
+from random import shuffle
+import time
 
 class SequentialBotSession:
   def __init__(self, browser):
     self.browser = browser
+    self.password = ""
 
   def order(self, elements):
     pass
@@ -17,12 +20,17 @@ class SequentialBotSession:
     el.click()
     el.send_keys(rand_email())
 
+  def handle_input_type_password(self, el):
+    el.click()
+    el.send_keys(self.password)
+
   def handle_textarea(self, el):
     el.click()
     el.send_keys(rand_text(70, 110))
 
   def execute(self, url):
     self.browser.get(url)
+    self.password = rand_text(10, 20)
 
     input_elements = self.browser.find_elements(By.TAG_NAME, "input")
     select_elements = self.browser.find_elements(By.TAG_NAME, "select")
@@ -38,4 +46,9 @@ class SequentialBotSession:
       else:
         getattr(self, f"handle_{tag_name}", lambda _: None)(el)
 
-    
+    self.browser.find_element_by_css_selector("button[type=submit]").click()
+    time.sleep(0.2)
+
+class RandomBotSession(SequentialBotSession):
+  def order(self, elements):
+    shuffle(elements)
