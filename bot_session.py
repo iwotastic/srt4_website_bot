@@ -1,3 +1,4 @@
+from math import sin, pi
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 from utils import rand_email, rand_text, move_mouse_based_on_func
@@ -61,15 +62,25 @@ class StraightLineBotSession(SequentialBotSession):
     self.last_y = 0
 
   def execute(self, url):
-    # Set mouse position to top middle of viewport (or somewhere around there)
-    self.last_x = int((0.25 + 0.5 * random()) * self.browser.get_window_size()["width"])
-    self.last_y = 0
+    self.browser.get(url)
+    self.password = rand_text(10, 20)
 
-    ac = ActionChains(self.browser)
-    ac.w3c_actions.pointer_action.move_to_location(self.last_x, self.last_y)
-    ac.perform()
+    input_elements = self.browser.find_elements(By.TAG_NAME, "input")
+    select_elements = self.browser.find_elements(By.TAG_NAME, "select")
+    textarea_elements = self.browser.find_elements(By.TAG_NAME, "textarea")
 
-    SequentialBotSession.execute(self, url)
+    elements = input_elements + select_elements + textarea_elements
+    self.order(elements)
+
+    for el in elements:
+      tag_name = el.tag_name.lower()
+      if tag_name == "input":
+        getattr(self, f"handle_input_type_{el.get_attribute('type')}", lambda _: None)(el)
+      else:
+        getattr(self, f"handle_{tag_name}", lambda _: None)(el)
+
+    self.browser.find_element_by_css_selector("button[type=submit]").click()
+    time.sleep(0.5)
 
   def click_element(self, el):
     x_to_click = el.rect["x"] + 5 + randrange(el.rect["width"] - 10)
@@ -79,7 +90,7 @@ class StraightLineBotSession(SequentialBotSession):
       (self.last_x, self.last_y),
       (x_to_click, y_to_click),
       lambda x: x,
-      [uniform(0, 0.02) for _ in range(randrange(2, 5))]
+      [uniform(0, 0.005) for _ in range(randrange(2, 5))]
     )
 
     ActionChains(self.browser).click().perform()
@@ -110,7 +121,24 @@ class ExponentialBotSession(StraightLineBotSession):
       (self.last_x, self.last_y),
       (x_to_click, y_to_click),
       lambda x: x ** exp,
-      [uniform(0, 0.02) for _ in range(randrange(2, 5))]
+      [uniform(0, 0.005) for _ in range(randrange(2, 5))]
+    )
+
+    ActionChains(self.browser).click().perform()
+
+class SinBotSession(StraightLineBotSession):
+  def click_element(self, el):
+    x_to_click = el.rect["x"] + 5 + randrange(el.rect["width"] - 10)
+    y_to_click = el.rect["y"] + 5 + randrange(el.rect["height"] - 10)
+    mult = randrange(0, 5)
+    exp = uniform(0.01, 3)
+    exp2 = uniform(0.01, 3)
+    move_mouse_based_on_func(
+      self.browser,
+      (self.last_x, self.last_y),
+      (x_to_click, y_to_click),
+      lambda x: abs(sin((x ** exp) * (pi / 2 + mult * 2 * pi)) ** exp2),
+      [uniform(0, 0.005) for _ in range(randrange(2, 5))]
     )
 
     ActionChains(self.browser).click().perform()

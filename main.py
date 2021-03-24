@@ -16,10 +16,12 @@ with open("form_index.json") as form_index: # Load form index
 # Set up browser routines...
 
 def execute_bot_data_routine(browser, name):
-  routines = [(bot_session.SequentialBotSession, form) for form in forms]
+  routines = []
+  routines += [(bot_session.SequentialBotSession, form) for form in forms]
   routines += [(bot_session.RandomBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
   routines += [(bot_session.StraightLineBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
   routines += [(bot_session.ExponentialBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
+  routines += [(bot_session.SinBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
   
   for bsc, form in track(routines, f"Using [b green4]{name}[/]"):
     bs = bsc(browser)
