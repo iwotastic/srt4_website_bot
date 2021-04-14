@@ -22,6 +22,7 @@ def execute_bot_data_routine(browser, name):
   routines += [(bot_session.StraightLineBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
   routines += [(bot_session.ExponentialBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
   routines += [(bot_session.SinBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
+  routines += [(bot_session.WiggleLineBotSession, form) for form in forms for _ in range(num_randoms_per_page)]
   
   for bsc, form in track(routines, f"Using [b green4]{name}[/]"):
     bs = bsc(browser)

@@ -142,3 +142,20 @@ class SinBotSession(StraightLineBotSession):
     )
 
     ActionChains(self.browser).click().perform()
+
+class WiggleLineBotSession(StraightLineBotSession):
+  def click_element(self, el):
+    x_to_click = el.rect["x"] + 5 + randrange(el.rect["width"] - 10)
+    y_to_click = el.rect["y"] + 5 + randrange(el.rect["height"] - 10)
+    mult = randrange(0.000001, 0.5)
+    mult2 = randrange(4, 30)
+    exp = uniform(0.01, 3)
+    move_mouse_based_on_func(
+      self.browser,
+      (self.last_x, self.last_y),
+      (x_to_click, y_to_click),
+      lambda x: min(abs(mult * sin((mult2 * x) ** exp)), 1.0),
+      [uniform(0, 0.005) for _ in range(randrange(2, 5))]
+    )
+
+    ActionChains(self.browser).click().perform()
