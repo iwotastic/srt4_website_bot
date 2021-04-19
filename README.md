@@ -3,7 +3,7 @@ An assortment of web bots for my SRT IV project.
 
 ## Requirements
 * Python 3.8 or later
-* `safaridriver` - Intructions to enable:
+* `safaridriver` - Instructions to enable:
   1. Enable "Show Develop in menu bar" in Safari Preferences > Advanced
   2. Enable Develop > Allow Remote Automation
 * `chromedriver`
